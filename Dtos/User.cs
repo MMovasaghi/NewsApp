@@ -1,0 +1,17 @@
+using System;
+
+namespace NewsApp.Models
+{
+    public class UserToCreate
+    {
+        public int id { get; set; }
+        public string email { get; set; }
+        public string password { get; set; }
+        public string passwordHash { get; set; }
+        public DateTime created_at { get; set; }
+        public UserToCreate()
+        {
+            created_at = DateTime.Now;
+        }
+    }
+}
