@@ -13,6 +13,7 @@ namespace NewsApp.Repository.IRepos
         Task<ICollection<News>> GetAllNotExpired();
         Task<ICollection<News>> GetAllExpired();
         Task<bool> ArchiveExpireds();
+        Task<ICollection<ArchivedNews>> GetArchive();
         Task<bool> Update(News obj);
         Task<bool> Delete(Guid id);
     }

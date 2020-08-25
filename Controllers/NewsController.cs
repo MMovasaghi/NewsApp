@@ -126,8 +126,8 @@ namespace NewsApp.Controllers
                 return BadRequest();
             }
         }
-        [HttpGet("archive")]
-        public async Task<IActionResult> Archive()
+        [HttpGet("archiving")]
+        public async Task<IActionResult> Archiving()
         {
             try
             {
@@ -142,5 +142,19 @@ namespace NewsApp.Controllers
                 return BadRequest();
             }
         }
+        [HttpGet("archives")]
+        public async Task<IActionResult> Archives()
+        {
+            try
+            {
+                var archives = await _repo.GetArchive();
+                return Ok(archives);
+            }
+            catch (System.Exception)
+            {
+                return BadRequest();
+            }
+        }
+
     }
 }

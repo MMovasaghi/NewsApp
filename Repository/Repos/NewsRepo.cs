@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using NewsApp.Data;
 using NewsApp.Models;
@@ -22,16 +23,26 @@ namespace NewsApp.Repository.Repos
         {
             try
             {
-                var news = await this.GetAllExpired();
-                await _context.Archive.AddRangeAsync((ArchivedNews)news);
-                if (await _context.SaveChangesAsync() > 0)
+                var news = await this.GetAllExpired();                
+                foreach (var item in news)
                 {
-                    _context.News.RemoveRange(news);
-                    if(await _context.SaveChangesAsync() > 0)
+                    var archive = new ArchivedNews()
                     {
-                        return true;
-                    }
-                    throw new Exception();
+                        title = item.title,
+                        content = item.content,
+                        imageUrl = item.imageUrl,
+                        videoUrl = item.videoUrl,
+                        publicImageId = item.publicImageId,
+                        publicVideoId = item.publicVideoId,
+                        created_at = item.created_at,
+                        expired_at = item.expired_at
+                    };
+                    await _context.Archive.AddAsync(archive);
+                    _context.News.Remove(item);
+                }
+                if(await _context.SaveChangesAsync() > 0)
+                {
+                    return true;
                 }
                 throw new Exception();
             }
@@ -113,6 +124,21 @@ namespace NewsApp.Repository.Repos
             {
                 var news = await _context.News
                     .Where(x => x.expired_at >= DateTime.Now)
+                    .OrderByDescending(x => x.created_at)
+                    .ToListAsync();
+                return news;
+            }
+            catch (System.Exception)
+            {
+                throw new Exception("Get All Failed.");
+            }
+        }
+
+        public async Task<ICollection<ArchivedNews>> GetArchive()
+        {
+            try
+            {
+                var news = await _context.Archive
                     .OrderByDescending(x => x.created_at)
                     .ToListAsync();
                 return news;
