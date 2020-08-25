@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NewsApp.Data;
+using NewsApp.Helpers;
 using NewsApp.Models;
 using NewsApp.Repository.IRepos;
 using NewsApp.Repository.Repos;
@@ -32,6 +33,7 @@ namespace NewsApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DataContext>(x => x.UseMySql(Configuration.GetConnectionString("sqlConnection")));
+            services.AddScoped<IUploader, LiaraCloud>();
             services.AddScoped<IAppRepo<News>, NewsRepo>();
             services.AddAutoMapper(typeof(Startup));
             services.AddCors();

@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using NewsApp.Dtos;
+using NewsApp.Dtos.News;
+using NewsApp.Helpers;
 using NewsApp.Models;
 using NewsApp.Repository.IRepos;
 
@@ -17,11 +18,13 @@ namespace NewsApp.Controllers
     {
         private readonly IAppRepo<News> _repo;
         private readonly IMapper _mapper;
+        private readonly IUploader _uploader;
 
-        public NewsController(IAppRepo<News> repo, IMapper mapper)
+        public NewsController(IAppRepo<News> repo, IMapper mapper, IUploader uploader)
         {
             _repo = repo;
             _mapper = mapper;
+            _uploader = uploader;
         }
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -29,7 +32,8 @@ namespace NewsApp.Controllers
             try
             {
                 var news = await _repo.GetAll();
-                return Ok(news);
+                var newsToShow = _mapper.Map<List<NewsToShow>>(news);
+                return Ok(newsToShow);
             }
             catch (System.Exception)
             {
@@ -42,7 +46,8 @@ namespace NewsApp.Controllers
             try
             {
                 var news = await _repo.Get(id);
-                return Ok(news);
+                var newsToShow = _mapper.Map<NewsToShow>(news);
+                return Ok(newsToShow);
             }
             catch (System.Exception)
             {
@@ -55,9 +60,26 @@ namespace NewsApp.Controllers
             try
             {
                 var news = _mapper.Map<News>(newsToCreate);
+                
+                if (newsToCreate.image != null)
+                {
+                    var imageUrl = await _uploader.Upload(newsToCreate.image);
+                    if(imageUrl != null)
+                    {
+                        news.imageUrl = imageUrl;
+                    }
+                }
+                if (newsToCreate.video != null)
+                {
+                    var videoUrl = await _uploader.Upload(newsToCreate.video);
+                    if(videoUrl != null)
+                    {
+                        news.videoUrl = videoUrl;
+                    }
+                }
                 if(await _repo.Create(news))
                 {
-                    return Ok(news);
+                    return Ok();
                 }
                 return BadRequest("Error");
             }

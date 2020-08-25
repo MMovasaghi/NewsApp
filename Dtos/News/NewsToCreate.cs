@@ -1,7 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Http;
 
-namespace NewsApp.Dtos
+namespace NewsApp.Dtos.News
 {
     public class NewsToCreate
     {
