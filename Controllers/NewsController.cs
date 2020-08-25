@@ -18,11 +18,11 @@ namespace NewsApp.Controllers
     [Route("api/[controller]")]    
     public class NewsController : ControllerBase
     {
-        private readonly IAppRepo<News> _repo;
+        private readonly INewsRepo _repo;
         private readonly IMapper _mapper;
         private readonly IUploader _uploader;
 
-        public NewsController(IAppRepo<News> repo, IMapper mapper, IUploader uploader)
+        public NewsController(INewsRepo repo, IMapper mapper, IUploader uploader)
         {
             _repo = repo;
             _mapper = mapper;
@@ -30,7 +30,7 @@ namespace NewsApp.Controllers
         }
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
@@ -44,8 +44,23 @@ namespace NewsApp.Controllers
             }
         }
         [AllowAnonymous]
+        [HttpGet("notex")]
+        public async Task<IActionResult> GetAllNotExpired()
+        {
+            try
+            {
+                var news = await _repo.GetAllNotExpired();
+                var newsToShow = _mapper.Map<List<NewsToShow>>(news);
+                return Ok(newsToShow);
+            }
+            catch (System.Exception)
+            {
+                return BadRequest();
+            }
+        }
+        [AllowAnonymous]
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(Guid id)
         {
             try
             {
@@ -92,14 +107,33 @@ namespace NewsApp.Controllers
                 return BadRequest();
             }
         }
-        [HttpPost("update")]
-        public async Task<IActionResult> Update(News news)
+        [HttpPut("update")]
+        public async Task<IActionResult> Update([FromForm]NewsToUpdate newsToUpdate)
         {
             try
             {
-                if(await _repo.Update(news))
+                var oldNews = await _repo.Get(newsToUpdate.id);
+                _mapper.Map(newsToUpdate, oldNews);
+                
+                if(await _repo.Update(oldNews))
                 {
-                    return Ok(news);
+                    return Ok();
+                }
+                return BadRequest("Error");
+            }
+            catch (System.Exception)
+            {
+                return BadRequest();
+            }
+        }
+        [HttpGet("archive")]
+        public async Task<IActionResult> Archive()
+        {
+            try
+            {
+                if (await _repo.ArchiveExpireds())
+                {
+                    return Ok();
                 }
                 return BadRequest("Error");
             }

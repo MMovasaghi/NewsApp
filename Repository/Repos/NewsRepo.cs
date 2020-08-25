@@ -9,7 +9,7 @@ using NewsApp.Repository.IRepos;
 
 namespace NewsApp.Repository.Repos
 {
-    public class NewsRepo : IAppRepo<News>
+    public class NewsRepo : INewsRepo
     {
         private readonly DataContext _context;
 
@@ -17,6 +17,30 @@ namespace NewsApp.Repository.Repos
         {
             _context = context;
         }
+
+        public async Task<bool> ArchiveExpireds()
+        {
+            try
+            {
+                var news = await this.GetAllExpired();
+                await _context.Archive.AddRangeAsync((ArchivedNews)news);
+                if (await _context.SaveChangesAsync() > 0)
+                {
+                    _context.News.RemoveRange(news);
+                    if(await _context.SaveChangesAsync() > 0)
+                    {
+                        return true;
+                    }
+                    throw new Exception();
+                }
+                throw new Exception();
+            }
+            catch (System.Exception)
+            {
+                throw new Exception("Archive Failed.");
+            }
+        }
+
         public async Task<bool> Create(News obj)
         {
             try
@@ -34,12 +58,12 @@ namespace NewsApp.Repository.Repos
             }
         }
 
-        public Task<bool> Delete(int id)
+        public Task<bool> Delete(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<News> Get(int id)
+        public async Task<News> Get(Guid id)
         {
             try
             {
@@ -56,7 +80,41 @@ namespace NewsApp.Repository.Repos
         {
             try
             {
-                var news = await _context.News.ToListAsync();
+                var news = await _context.News
+                    .OrderByDescending(x => x.created_at)
+                    .ToListAsync();
+                return news;
+            }
+            catch (System.Exception)
+            {
+                throw new Exception("Get All Failed.");
+            }
+        }
+
+        public async Task<ICollection<News>> GetAllExpired()
+        {
+            try
+            {
+                var news = await _context.News
+                    .Where(x => x.expired_at < DateTime.Now)
+                    .OrderByDescending(x => x.created_at)
+                    .ToListAsync();
+                return news;
+            }
+            catch (System.Exception)
+            {
+                throw new Exception("Get All Failed.");
+            }
+        }
+
+        public async Task<ICollection<News>> GetAllNotExpired()
+        {
+            try
+            {
+                var news = await _context.News
+                    .Where(x => x.expired_at >= DateTime.Now)
+                    .OrderByDescending(x => x.created_at)
+                    .ToListAsync();
                 return news;
             }
             catch (System.Exception)
@@ -69,6 +127,10 @@ namespace NewsApp.Repository.Repos
         {
             try
             {
+                if (obj.expired_at == null)
+                {
+                    obj.expired_at = DateTime.Now.AddDays(7);
+                }
                 _context.News.Update(obj);
                 if (await _context.SaveChangesAsync() > 0)
                 {

@@ -12,6 +12,7 @@ namespace NewsApp.Helpers
             CreateMap<NewsToCreate, News>();
             CreateMap<News, NewsToShow>();
             CreateMap<News, NewsAdminPanel>();
+            CreateMap<NewsToUpdate, News>();
         }
     }
 }

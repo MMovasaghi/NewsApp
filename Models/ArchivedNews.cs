@@ -1,8 +1,8 @@
 using System;
 
-namespace NewsApp.Dtos.News
+namespace NewsApp.Models
 {
-    public class NewsToShow
+    public class ArchivedNews
     {
         public Guid id { get; set; }
         public string title { get; set; }
@@ -12,5 +12,6 @@ namespace NewsApp.Dtos.News
         public string publicImageId { get; set; }
         public string publicVideoId { get; set; }
         public DateTime created_at { get; set; }
+        public DateTime expired_at { get; set; }
     }
 }

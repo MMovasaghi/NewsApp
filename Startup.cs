@@ -37,7 +37,7 @@ namespace NewsApp
         {
             services.AddScoped<IAuthRepo, AuthRepo>();
             services.AddScoped<IUploader, LiaraCloud>();
-            services.AddScoped<IAppRepo<News>, NewsRepo>();
+            services.AddScoped<INewsRepo, NewsRepo>();
             services.AddAutoMapper(typeof(Startup));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
