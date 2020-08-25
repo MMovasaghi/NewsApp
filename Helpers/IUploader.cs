@@ -8,6 +8,6 @@ namespace NewsApp.Helpers
     {
         Task<string> Upload(IFormFile file);
         Task<string> Update(string url, IFormFile newFile);
-        bool delete(string url);
+        Task<bool> delete(string url);
     }
 }

@@ -114,8 +114,44 @@ namespace NewsApp.Controllers
             {
                 var oldNews = await _repo.Get(newsToUpdate.id);
                 _mapper.Map(newsToUpdate, oldNews);
-                
+                if (newsToUpdate.image != null)
+                {
+                    var imageUrl = await _uploader.Upload(newsToUpdate.image);
+                    if(imageUrl != null)
+                    {
+                        oldNews.imageUrl = imageUrl;
+                    }
+                }
+                if (newsToUpdate.video != null)
+                {
+                    var videoUrl = await _uploader.Upload(newsToUpdate.video);
+                    if(videoUrl != null)
+                    {
+                        oldNews.videoUrl = videoUrl;
+                    }
+                }
                 if(await _repo.Update(oldNews))
+                {
+                    return Ok();
+                }
+                return BadRequest("Error");
+            }
+            catch (System.Exception)
+            {
+                return BadRequest();
+            }
+        }
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            try
+            {
+                var oldNews = await _repo.Get(id);
+
+                await _uploader.delete(oldNews.imageUrl);
+                await _uploader.delete(oldNews.videoUrl);
+
+                if(await _repo.Delete(id))
                 {
                     return Ok();
                 }

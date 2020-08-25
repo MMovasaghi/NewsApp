@@ -6,10 +6,6 @@ namespace NewsApp.Helpers
 {
     public class LiaraCloud : IUploader
     {
-        public bool delete(string url)
-        {
-            throw new NotImplementedException();
-        }
 
         public Task<string> Update(string url, IFormFile newFile)
         {
@@ -17,6 +13,11 @@ namespace NewsApp.Helpers
         }
 
         public Task<string> Upload(IFormFile file)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> delete(string url)
         {
             throw new NotImplementedException();
         }

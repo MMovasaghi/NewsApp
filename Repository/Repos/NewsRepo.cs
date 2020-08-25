@@ -69,9 +69,22 @@ namespace NewsApp.Repository.Repos
             }
         }
 
-        public Task<bool> Delete(Guid id)
+        public async Task<bool> Delete(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var news = await this.Get(id);
+                _context.News.Remove(news);
+                if (await _context.SaveChangesAsync() > 0)
+                {
+                    return true;
+                }
+                throw new Exception();
+            }
+            catch (System.Exception)
+            {
+                throw new Exception("Delete Failed.");
+            }
         }
 
         public async Task<News> Get(Guid id)
