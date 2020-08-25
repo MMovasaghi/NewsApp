@@ -46,9 +46,9 @@ namespace NewsApp.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForAuthDto userForLoginDto)
         {
-            userForLoginDto.username = userForLoginDto.username.ToLower();
+            userForLoginDto.email = userForLoginDto.email.ToLower();
 
-            var userFromRepo = await _repo.Login(userForLoginDto.username, userForLoginDto.password);
+            var userFromRepo = await _repo.Login(userForLoginDto.email, userForLoginDto.password);
 
             if (userFromRepo == null)
                 return Unauthorized();
@@ -80,14 +80,14 @@ namespace NewsApp.Controllers
         [HttpPost("delete")]
         public async Task<IActionResult> DeleteUser(UserForAuthDto userForDeleteDto)
         {
-             userForDeleteDto.username = userForDeleteDto.username.ToLower();
+             userForDeleteDto.email = userForDeleteDto.email.ToLower();
 
-            var userFromRepo = await _repo.Login(userForDeleteDto.username, userForDeleteDto.password);
+            var userFromRepo = await _repo.Login(userForDeleteDto.email, userForDeleteDto.password);
 
             if (userFromRepo == null)
                 return Unauthorized();
 
-            if(await _repo.DeleteUser(userForDeleteDto.username, userForDeleteDto.password))
+            if(await _repo.DeleteUser(userForDeleteDto.email, userForDeleteDto.password))
             {
                 return Ok();
             }
@@ -100,14 +100,14 @@ namespace NewsApp.Controllers
         [HttpPost("update")]
         public async Task<IActionResult> UpdateUser(UserForUpdateDto userForUpdateDto)
         {
-            userForUpdateDto.oldUsername = userForUpdateDto.oldUsername.ToLower();
+            userForUpdateDto.oldEmail = userForUpdateDto.oldEmail.ToLower();
 
-            var userFromRepo = await _repo.Login(userForUpdateDto.oldUsername, userForUpdateDto.oldPassword);
+            var userFromRepo = await _repo.Login(userForUpdateDto.oldEmail, userForUpdateDto.oldPassword);
 
             if (userFromRepo == null)
                 return Unauthorized();
 
-            userForUpdateDto.newUsername = userForUpdateDto.newUsername.ToLower();
+            userForUpdateDto.newEmail = userForUpdateDto.newEmail.ToLower();
 
             // var userToUpdate = new User
             // {
@@ -116,7 +116,7 @@ namespace NewsApp.Controllers
             // if(userToUpdate.Username==null)
             // userToUpdate.Username=userForUpdateDto.oldUsername;
 
-            if (await _repo.UpdateUser(userForUpdateDto.oldUsername, userForUpdateDto.oldPassword, userForUpdateDto.newUsername, userForUpdateDto.newPassword) != null)
+            if (await _repo.UpdateUser(userForUpdateDto.oldEmail, userForUpdateDto.oldPassword, userForUpdateDto.newEmail, userForUpdateDto.newPassword) != null)
             {
                 return Ok(userForUpdateDto);
             } 

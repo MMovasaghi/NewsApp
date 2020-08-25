@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace NewsApp.Migrations
 {
-    public partial class inital : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -35,8 +35,8 @@ namespace NewsApp.Migrations
                     id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     email = table.Column<string>(nullable: true),
-                    password = table.Column<string>(nullable: true),
-                    passwordHash = table.Column<string>(nullable: true),
+                    passwordHash = table.Column<byte[]>(nullable: true),
+                    passwordSalt = table.Column<byte[]>(nullable: true),
                     created_at = table.Column<DateTime>(nullable: false),
                     updated_at = table.Column<DateTime>(nullable: true)
                 },

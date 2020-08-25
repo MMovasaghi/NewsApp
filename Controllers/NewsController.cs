@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NewsApp.Dtos.News;
@@ -13,7 +14,8 @@ using NewsApp.Repository.IRepos;
 namespace NewsApp.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Authorize]
+    [Route("api/[controller]")]    
     public class NewsController : ControllerBase
     {
         private readonly IAppRepo<News> _repo;
@@ -26,6 +28,7 @@ namespace NewsApp.Controllers
             _mapper = mapper;
             _uploader = uploader;
         }
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -40,6 +43,7 @@ namespace NewsApp.Controllers
                 return BadRequest();
             }
         }
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {

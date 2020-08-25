@@ -9,8 +9,8 @@ using NewsApp.Data;
 namespace NewsApp.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200824091203_inital")]
-    partial class inital
+    [Migration("20200825060611_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -66,11 +66,11 @@ namespace NewsApp.Migrations
                     b.Property<string>("email")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<string>("password")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                    b.Property<byte[]>("passwordHash")
+                        .HasColumnType("longblob");
 
-                    b.Property<string>("passwordHash")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                    b.Property<byte[]>("passwordSalt")
+                        .HasColumnType("longblob");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("datetime(6)");

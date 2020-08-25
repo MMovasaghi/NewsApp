@@ -35,20 +35,23 @@ namespace NewsApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<IAuthRepo, AuthRepo>();
+            services.AddScoped<IUploader, LiaraCloud>();
+            services.AddScoped<IAppRepo<News>, NewsRepo>();
+            services.AddAutoMapper(typeof(Startup));
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings:secretKey").Value)),
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
             });
             services.AddDbContext<DataContext>(x => x.UseMySql(Configuration.GetConnectionString("sqlConnection")));
-            services.AddScoped<IUploader, LiaraCloud>();
-            services.AddScoped<IAppRepo<News>, NewsRepo>();
-            services.AddAutoMapper(typeof(Startup));
+            
             services.AddCors();
             services.AddControllers();            
         }

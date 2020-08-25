@@ -64,11 +64,11 @@ namespace NewsApp.Migrations
                     b.Property<string>("email")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<string>("password")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                    b.Property<byte[]>("passwordHash")
+                        .HasColumnType("longblob");
 
-                    b.Property<string>("passwordHash")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                    b.Property<byte[]>("passwordSalt")
+                        .HasColumnType("longblob");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("datetime(6)");
