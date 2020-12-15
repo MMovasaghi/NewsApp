@@ -29,12 +29,27 @@ namespace NewsApp.Controllers
             _uploader = uploader;
         }
         [AllowAnonymous]
-        [HttpGet]
+        [HttpGet("getall")]
         public async Task<IActionResult> GetAll()
         {
             try
             {
                 var news = await _repo.GetAll();
+                var newsToShow = _mapper.Map<List<NewsToShow>>(news);
+                return Ok(newsToShow);
+            }
+            catch (System.Exception)
+            {
+                return BadRequest();
+            }
+        }
+        [AllowAnonymous]
+        [HttpPost("search")]
+        public async Task<IActionResult> Search([FromForm]NewsToSearch newsToSearch)
+        {
+            try
+            {
+                var news = await _repo.Search(newsToSearch.item, newsToSearch.param);
                 var newsToShow = _mapper.Map<List<NewsToShow>>(news);
                 return Ok(newsToShow);
             }
@@ -80,22 +95,22 @@ namespace NewsApp.Controllers
             {
                 var news = _mapper.Map<News>(newsToCreate);
                 
-                if (newsToCreate.image != null)
-                {
-                    var imageUrl = await _uploader.Upload(newsToCreate.image);
-                    if(imageUrl != null)
-                    {
-                        news.imageUrl = imageUrl;
-                    }
-                }
-                if (newsToCreate.video != null)
-                {
-                    var videoUrl = await _uploader.Upload(newsToCreate.video);
-                    if(videoUrl != null)
-                    {
-                        news.videoUrl = videoUrl;
-                    }
-                }
+                // if (newsToCreate.image != null)
+                // {
+                //     var imageUrl = await _uploader.Upload(newsToCreate.image);
+                //     if(imageUrl != null)
+                //     {
+                //         news.imageUrl = imageUrl;
+                //     }
+                // }
+                // if (newsToCreate.video != null)
+                // {
+                //     var videoUrl = await _uploader.Upload(newsToCreate.video);
+                //     if(videoUrl != null)
+                //     {
+                //         news.videoUrl = videoUrl;
+                //     }
+                // }
                 if(await _repo.Create(news))
                 {
                     return Ok();
@@ -114,22 +129,22 @@ namespace NewsApp.Controllers
             {
                 var oldNews = await _repo.Get(newsToUpdate.id);
                 _mapper.Map(newsToUpdate, oldNews);
-                if (newsToUpdate.image != null)
-                {
-                    var imageUrl = await _uploader.Upload(newsToUpdate.image);
-                    if(imageUrl != null)
-                    {
-                        oldNews.imageUrl = imageUrl;
-                    }
-                }
-                if (newsToUpdate.video != null)
-                {
-                    var videoUrl = await _uploader.Upload(newsToUpdate.video);
-                    if(videoUrl != null)
-                    {
-                        oldNews.videoUrl = videoUrl;
-                    }
-                }
+                // if (newsToUpdate.image != null)
+                // {
+                //     var imageUrl = await _uploader.Upload(newsToUpdate.image);
+                //     if(imageUrl != null)
+                //     {
+                //         oldNews.imageUrl = imageUrl;
+                //     }
+                // }
+                // if (newsToUpdate.video != null)
+                // {
+                //     var videoUrl = await _uploader.Upload(newsToUpdate.video);
+                //     if(videoUrl != null)
+                //     {
+                //         oldNews.videoUrl = videoUrl;
+                //     }
+                // }
                 if(await _repo.Update(oldNews))
                 {
                     return Ok();
@@ -148,8 +163,8 @@ namespace NewsApp.Controllers
             {
                 var oldNews = await _repo.Get(id);
 
-                await _uploader.delete(oldNews.imageUrl);
-                await _uploader.delete(oldNews.videoUrl);
+                // await _uploader.delete(oldNews.imageUrl);
+                // await _uploader.delete(oldNews.videoUrl);
 
                 if(await _repo.Delete(id))
                 {

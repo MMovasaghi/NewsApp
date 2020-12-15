@@ -162,6 +162,62 @@ namespace NewsApp.Repository.Repos
             }
         }
 
+        public async Task<ICollection<News>> Search(string item, SearchParam param)
+        {
+            try
+            {
+                string itemLower = item.ToLower();
+                if(param == SearchParam.all)
+                {
+                    var news = await _context.News
+                        .Where(x => 
+                            x.title.ToLower().Contains(itemLower) ||
+                            x.content.ToLower().Contains(itemLower) ||
+                            x.created_at.ToString().Contains(itemLower) ||
+                            x.expired_at.ToString().Contains(itemLower)
+                        ).ToListAsync();
+                    return news;
+                }
+                else if(param == SearchParam.title)
+                {
+                    var news = await _context.News
+                        .Where(x => 
+                            x.title.ToLower().Contains(itemLower)
+                        ).ToListAsync();
+                    return news;
+                }
+                else if(param == SearchParam.content)
+                {
+                    var news = await _context.News
+                        .Where(x => 
+                            x.content.ToLower().Contains(itemLower)
+                        ).ToListAsync();
+                    return news;
+                }
+                else if(param == SearchParam.created_at)
+                {
+                    var news = await _context.News
+                        .Where(x => 
+                            x.created_at.ToString().Contains(itemLower)
+                        ).ToListAsync();
+                    return news;
+                }
+                else if(param == SearchParam.expired_at)
+                {
+                    var news = await _context.News
+                        .Where(x => 
+                            x.expired_at.ToString().Contains(itemLower)
+                        ).ToListAsync();
+                    return news;
+                }
+                throw new Exception();
+            }
+            catch (System.Exception)
+            {
+                throw new Exception("Search Failed.");
+            }
+        }
+
         public async Task<bool> Update(News obj)
         {
             try
