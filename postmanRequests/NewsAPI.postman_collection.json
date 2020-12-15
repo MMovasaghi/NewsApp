@@ -171,12 +171,12 @@
 							"formdata": [
 								{
 									"key": "title",
-									"value": "اخبار شماره 3",
+									"value": "{{$randomLoremWords}}",
 									"type": "text"
 								},
 								{
 									"key": "content",
-									"value": "اخبار شماره 3 توضیحات",
+									"value": "{{$randomLoremParagraphs}}",
 									"type": "text"
 								}
 							]
@@ -196,6 +196,40 @@
 					"response": []
 				},
 				{
+					"name": "Search",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "item",
+									"value": "2020",
+									"type": "text"
+								},
+								{
+									"key": "param",
+									"value": "3",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local}}/api/news/search",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"api",
+								"news",
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get All",
 					"request": {
 						"auth": {
@@ -204,13 +238,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{local}}/api/news",
+							"raw": "{{local}}/api/news/getall",
 							"host": [
 								"{{local}}"
 							],
 							"path": [
 								"api",
-								"news"
+								"news",
+								"getall"
 							]
 						}
 					},
